@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import styled from "styled-components";
+import Button from '@mui/material/Button';
 
 // CSS
 const PizzaFrame = styled.div`
@@ -31,7 +32,7 @@ const Save = styled.button`
     border-radius: 5px;
 `;
 
-const Pizza = ({ pizza }) => {
+export const Pizza = ({ pizza }) => {
     const [data, setData] = useState(pizza);
     const [dirty, setDirty] = useState(false);
 
@@ -42,10 +43,21 @@ const Pizza = ({ pizza }) => {
 
     function onSave() {
         setDirty(false);
-        // make rest call
+
+        // Make HTTP PUT request to "/pizza/{id}" endpoint.
+        fetch(`/pizza/${data.id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
     }
 
     return (<React.Fragment>
+        <div>
+            <Button variant='contained' onClick={(evt) => alert("click")}>Add new +</Button>
+        </div>
         <PizzaFrame>
             <h3>
                 <Title onChange={(evt) => update(evt.target.value, 'name', data)} value={data.name} />
@@ -53,31 +65,8 @@ const Pizza = ({ pizza }) => {
             <div>
                 <Input onChange={(evt) => update(evt.target.value, 'description', data)} value={data.description} />
             </div>
+
             {dirty ? <div><Save onClick={onSave}>Save</Save></div> : null}
         </PizzaFrame>
     </React.Fragment >);
 }
-
-const Main = () => {
-    const [pizzas, setPizzas] = useState([]);
-    useEffect(() => {
-        fetchData();
-    }, []);
-
-    function fetchData() {
-        fetch("/pizza")
-            .then(response => response.json())
-            .then(data => setPizzas(data))
-    }
-
-    const data = pizzas.map(pizza => <Pizza pizza={pizza} />);
-
-    return (<React.Fragment>
-        {pizzas.length === 0 ?
-            <div>No pizzas</div> :
-            <div>{data}</div>
-        }
-    </React.Fragment>);
-}
-
-export default Main;

@@ -1,10 +1,10 @@
 import Main from './Main';
-import './App.css';
+import '../App.css';
 
-function App() {
+const App = () => {
   return (
     <div className="App">
-      <Main />
+      <Main message="Hello, World!" />
     </div>
   );
 }
